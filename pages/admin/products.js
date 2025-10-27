@@ -22,7 +22,9 @@ const AdminProducts = () => {
     stock: '',
     description: '',
     image: '',
-    imageFile: null
+    imageFile: null,
+    sizes: '',
+    colors: ''
   })
   const [imagePreview, setImagePreview] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
@@ -189,7 +191,11 @@ const AdminProducts = () => {
         stock: parseInt(formData.stock),
         category: formData.category,
         images: imageUrl ? [imageUrl] : [],
-        status: 'active'
+        status: 'active',
+        details: {
+          size: formData.sizes ? formData.sizes.split(',').map(s => s.trim()).filter(s => s) : [],
+          color: formData.colors ? formData.colors.split(',').map(c => c.trim()).filter(c => c) : []
+        }
       }
 
       if (editingProduct) {
@@ -202,7 +208,7 @@ const AdminProducts = () => {
 
       setShowModal(false)
       setEditingProduct(null)
-      setFormData({ name: '', category: categories.length > 0 ? categories[0]._id : '', price: '', stock: '', description: '', image: '', imageFile: null })
+      setFormData({ name: '', category: categories.length > 0 ? categories[0]._id : '', price: '', stock: '', description: '', image: '', imageFile: null, sizes: '', colors: '' })
       setImagePreview(null)
     } catch (error) {
       alert('Error: ' + error.message)
@@ -220,7 +226,9 @@ const AdminProducts = () => {
       stock: product.stock.toString(),
       description: product.description,
       image: product.images && product.images[0] ? product.images[0] : '',
-      imageFile: null
+      imageFile: null,
+      sizes: product.details?.size ? product.details.size.join(', ') : '',
+      colors: product.details?.color ? product.details.color.join(', ') : ''
     })
     setImagePreview(getImageUrl(product.images))
     setShowModal(true)
@@ -252,7 +260,7 @@ const AdminProducts = () => {
 
   const openAddModal = () => {
     setEditingProduct(null)
-    setFormData({ name: '', category: categories.length > 0 ? categories[0]._id : '', price: '', stock: '', description: '', image: '', imageFile: null })
+    setFormData({ name: '', category: categories.length > 0 ? categories[0]._id : '', price: '', stock: '', description: '', image: '', imageFile: null, sizes: '', colors: '' })
     setImagePreview(null)
     setShowModal(true)
   }
@@ -463,6 +471,32 @@ const AdminProducts = () => {
                       rows="4"
                       placeholder="Enter product description"
                     />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Sizes (comma-separated)</label>
+                      <input
+                        type="text"
+                        value={formData.sizes}
+                        onChange={(e) => setFormData({ ...formData, sizes: e.target.value })}
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                        placeholder="XS, S, M, L, XL"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Example: XS, S, M, L, XL</p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Colors (comma-separated)</label>
+                      <input
+                        type="text"
+                        value={formData.colors}
+                        onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                        placeholder="Red, Blue, Green"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Example: Red, Blue, Green</p>
+                    </div>
                   </div>
 
                   <div>

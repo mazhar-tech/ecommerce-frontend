@@ -1,18 +1,32 @@
 import React, { useRef } from 'react';
+import { useRouter } from 'next/router';
 import { AiOutlineMinus, AiOutlinePlus, AiOutlineShopping } from 'react-icons/ai';
 import {HiOutlineTrash} from 'react-icons/hi'
 import toast from 'react-hot-toast';
 import { useStateContext } from '../context/StateContext';
-import { urlFor } from '../lib/client';
+import apiClient from '../lib/apiClient';
 import { formatCurrencyCompact } from '../lib/currency';
 
 const Cart = () => {
   const cartRef = useRef();
+  const router = useRouter();
   const {cartItems, totalPrice, totalQty, onRemove, toggleCartItemQuantity} = useStateContext();
 
-  const handleCheckout = async () => {
-    // Checkout functionality placeholder
-    toast.success('Checkout functionality will be implemented soon!');
+  const handleCheckout = () => {
+    if (cartItems.length === 0) {
+      toast.error('Your cart is empty!')
+      return
+    }
+    
+    // Check if user is authenticated
+    const isAuthenticated = localStorage.getItem('isAuthenticated')
+    
+    if (!isAuthenticated) {
+      // Redirect to auth page with return path
+      router.push('/auth')
+    } else {
+      router.push('/checkout')
+    }
   }
 
   return (
@@ -27,32 +41,53 @@ const Cart = () => {
             </div>
           )}
 
-          {cartItems.length >= 1 && cartItems.map((item) => (
-            <div key={item._id} className='item-card'>
-              <div className='item-image'>
-                <img src={urlFor(item?.image[0])} alt='img' />
-              </div>
-              <div className='item-details'>
-                <div className='name-and-remove'>
-                  <h3>{item.name}</h3>  
-                  <button type='buttin' onClick={() => onRemove(item)} className='remove-item'>
-                  <HiOutlineTrash size={28} />  
-                  </button>
+          {cartItems.length >= 1 && cartItems.map((item) => {
+            // Handle both old and new image structures
+            const images = item.images || (item.image ? [item.image] : [])
+            const imageUrl = apiClient.getImageUrl(images)
+            
+            return (
+              <div key={item._id} className='item-card'>
+                <div className='item-image bg-gray-100 '>
+                  <img src={imageUrl} alt={item.name} />
                 </div>
-                <p className='item-tag'>Dress</p>
-                <p className='delivery-est'>Delivery Estimation</p>
-                <p className='delivery-days'>5 Working Days</p>
-                <div className='price-and-qty'>
-                  <span className='price'>{formatCurrencyCompact(item.price * item.quantity)}</span>  
-                  <div>
-                    <span className='minus' onClick={() => toggleCartItemQuantity(item._id, 'dec')}><AiOutlineMinus /></span>
-                    <span className='num' onClick=''>{item.quantity}</span>
-                    <span className='plus' onClick={() => toggleCartItemQuantity(item._id, 'inc')}><AiOutlinePlus /></span>
-                  </div>   
+                <div className='item-details'>
+                  <div className='name-and-remove'>
+                    <h3>{item.name}</h3>  
+                    <button type='button' onClick={() => onRemove(item)} className='remove-item'>
+                      <HiOutlineTrash size={28} />  
+                    </button>
+                  </div>
+                  {/* Show selected size and color if available */}
+                  {(item.selectedSize || item.selectedColor) && (
+                    <div className='item-variants mt-2 flex gap-2'>
+                      {item.selectedSize && (
+                        <span className='variant-badge px-2 py-1 bg-gray-200 rounded text-sm'>
+                          Size: {item.selectedSize}
+                        </span>
+                      )}
+                      {item.selectedColor && (
+                        <span className='variant-badge px-2 py-1 bg-gray-200 rounded text-sm'>
+                          Color: {item.selectedColor}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  {/* <p className='item-tag'>{item.category?.name || item.tags || 'Product'}</p> */}
+                  <p className='delivery-est'>Delivery Estimation</p>
+                  <p className='delivery-days'>5 Working Days</p>
+                  <div className='price-and-qty'>
+                    <span className='price'>{formatCurrencyCompact(item.price * item.quantity)}</span>  
+                    <div className='flex gap-2'>
+                      <span className='plus' onClick={() => toggleCartItemQuantity(item._id, 'inc')}><AiOutlinePlus /></span>
+                      <span className='num'>{item.quantity}</span>
+                      <span className='plus' onClick={() => toggleCartItemQuantity(item._id, 'dec')}><AiOutlineMinus /></span>
+                    </div>   
+                  </div>
                 </div>
               </div>
-            </div>
-            ))}    
+            )
+          })}    
         </div>
 
         {cartItems.length >= 1 && (

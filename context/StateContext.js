@@ -10,6 +10,40 @@ export const StateContext = ({ children }) => {
   const [totalQty, setTotalQty] = useState(0);
   const [qty, setQty] = useState(1);
 
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem('cartItems');
+      const savedTotalPrice = localStorage.getItem('totalPrice');
+      const savedTotalQty = localStorage.getItem('totalQty');
+
+      if (savedCart) {
+        const items = JSON.parse(savedCart);
+        setCartItems(items);
+        
+        // Calculate totals from saved items
+        const price = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const qty = items.reduce((sum, item) => sum + item.quantity, 0);
+        
+        setTotalPrice(price);
+        setTotalQty(qty);
+      }
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error);
+    }
+  }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      localStorage.setItem('totalPrice', totalPrice.toString());
+      localStorage.setItem('totalQty', totalQty.toString());
+    } catch (error) {
+      console.error('Error saving cart to localStorage:', error);
+    }
+  }, [cartItems, totalPrice, totalQty]);
+
   let foundProduct;
   let index;
 

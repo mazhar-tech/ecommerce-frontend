@@ -12,7 +12,8 @@ import {
   LogOut,
   User,
   Tag,
-  Shield
+  Shield,
+  ImageIcon
 } from 'lucide-react'
 
 const AdminLayout = ({ children }) => {
@@ -24,6 +25,7 @@ const AdminLayout = ({ children }) => {
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Products', href: '/admin/products', icon: Package },
     { name: 'Categories', href: '/admin/categories', icon: Tag },
+    { name: 'Banners', href: '/admin/banners', icon: ImageIcon },
     { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
     { name: 'Reports', href: '/admin/reports', icon: BarChart3 },
   ]
