@@ -60,7 +60,7 @@ const TermsAndConditions = () => {
           <section>
             <h2 className="text-2xl font-semibold mb-4">8. Limitation of Liability</h2>
             <p className="mb-4">
-              Our website and products are provided "as is" without warranties of any kind. We shall not be liable for any damages arising from the use of our website or products.
+              Our website and products are provided &quot;as is&quot; without warranties of any kind. We shall not be liable for any damages arising from the use of our website or products.
             </p>
           </section>
 

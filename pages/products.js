@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { AllProducts } from '../components'
 import apiClient from '../lib/apiClient'
 
-const products = () => {
+const Products = () => {
     const [allproducts, setAllproducts] = useState([])
     const [filteredProducts, setFilteredProducts] = useState([])
     const [categories, setCategories] = useState([])
@@ -228,7 +228,7 @@ const products = () => {
                                         </svg>
                                     </div>
                                     <p className="text-xl font-semibold text-gray-900 mb-2">No products found</p>
-                                    <p className="text-sm text-gray-500">Try adjusting your filters to find what you're looking for</p>
+                                    <p className="text-sm text-gray-500">Try adjusting your filters to find what you&apos;re looking for</p>
                                 </div>
                             </div>
                         )}
@@ -239,4 +239,4 @@ const products = () => {
     )
 }
 
-export default products
+export default Products
