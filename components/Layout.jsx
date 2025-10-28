@@ -1,12 +1,12 @@
 import React from 'react'
 import Head from 'next/head'
-import { Footer, Navbar } from '../components'
+import { Footer, Navbar, WhatsAppButton } from '../components'
 
 const Layout = ({children}) => {
   return (
     <div className='layout'>
         <Head>
-            <title>Dine Market</title>
+            <title>E-commerce</title>
         </Head>
         <header>
             <Navbar />
@@ -17,6 +17,7 @@ const Layout = ({children}) => {
         <footer>
             <Footer />
         </footer>
+        <WhatsAppButton phoneNumber='1234567890' />
     </div>
   )
 }

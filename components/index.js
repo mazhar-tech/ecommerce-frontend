@@ -7,6 +7,7 @@ export { default as FeaturesBanner } from './FeaturesBanner';
 export { default as Newsletter } from './Newsletter';
 export { default as Footer } from './Footer';
 export { default as Layout } from './Layout';
+export { default as WhatsAppButton } from './WhatsAppButton';
 
 // Admin components
 export { default as AdminLayout } from './admin/AdminLayout';
