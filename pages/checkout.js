@@ -10,43 +10,56 @@ const Checkout = () => {
   const { cartItems, totalPrice, totalQty, setCartItems, setTotalPrice, setTotalQty } = useStateContext()
   const router = useRouter()
   
-  // Check authentication on mount
-  React.useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated')
-    if (!isAuthenticated) {
-      router.push({
-        pathname: '/auth',
-        query: { redirect: '/checkout' }
-      })
-    }
-  }, [router])
-  
-  // Get user data from localStorage
-  const getUserData = () => {
-    try {
-      const data = localStorage.getItem('userData')
-      if (data) {
-        return JSON.parse(data)
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error)
-    }
-    return null
-  }
-  
-  const userData = getUserData()
-  const nameParts = userData?.name?.split(' ') || []
-  
+  const [userData, setUserData] = useState(null)
   const [shippingInfo, setShippingInfo] = useState({
-    firstName: nameParts[0] || '',
-    lastName: nameParts.slice(1).join(' ') || '',
-    email: userData?.email || '',
+    firstName: '',
+    lastName: '',
+    email: '',
     phone: '',
     address: '',
     city: '',
     country: '',
     postalCode: ''
   })
+  
+  // Check authentication and load user data on mount (client-side only)
+  React.useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return
+    
+    const isAuthenticated = localStorage.getItem('isAuthenticated')
+    if (!isAuthenticated) {
+      router.push({
+        pathname: '/auth',
+        query: { redirect: '/checkout' }
+      })
+      return
+    }
+    
+    // Get user data from localStorage
+    try {
+      const data = localStorage.getItem('userData')
+      if (data) {
+        const parsedData = JSON.parse(data)
+        setUserData(parsedData)
+        
+        // Initialize shipping info with user data
+        const nameParts = parsedData?.name?.split(' ') || []
+        setShippingInfo({
+          firstName: nameParts[0] || '',
+          lastName: nameParts.slice(1).join(' ') || '',
+          email: parsedData?.email || '',
+          phone: '',
+          address: '',
+          city: '',
+          country: '',
+          postalCode: ''
+        })
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error)
+    }
+  }, [router])
   
   const [paymentMethod, setPaymentMethod] = useState('cashOnDelivery')
   const [loading, setLoading] = useState(false)
